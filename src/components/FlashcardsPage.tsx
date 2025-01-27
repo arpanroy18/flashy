@@ -183,10 +183,7 @@ export function FlashcardsPage({
       decks={decks}
       onSelectDeck={setSelectedDeck}
       onStudyDeck={handleStartStudy}
-      onCreateDeck={() => {
-        const name = prompt('Enter deck name:');
-        if (name) onCreateDeck(name);
-      }}
+      onCreateDeck={onCreateDeck}    // Remove the prompt wrapper, just pass onCreateDeck directly
     />
   );
 }

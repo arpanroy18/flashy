@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { PlusCircle, Play, FolderPlus } from 'lucide-react';
+import { PlusCircle, Settings, FolderPlus } from 'lucide-react';
 import { Deck } from '../types';
 
 interface DeckListProps {
@@ -59,16 +59,16 @@ export function DeckList({ decks, onSelectDeck, onStudyDeck, onCreateDeck }: Dec
           
           <div className="flex gap-4">
             <button
-              onClick={() => onSelectDeck(deck)}
-              className="flex-1 px-3 py-2 text-gray-300 hover:text-gray-100 border border-gray-700 rounded-lg hover:border-accent-purple transition-colors"
-            >
-              View Cards
-            </button>
-            <button
               onClick={() => onStudyDeck(deck)}
-              className="px-3 py-2 bg-accent-purple hover:bg-accent-indigo text-gray-100 rounded-lg transition-colors"
+              className="flex-1 px-3 py-2 text-gray-300 hover:text-gray-100 border border-gray-700 rounded-lg hover:border-accent-purple bg-accent-purple hover:bg-accent-indigo transition-colors"
             >
               Study
+            </button>
+            <button
+              onClick={() => onSelectDeck(deck)}
+              className="px-3 py-2 text-gray-300 hover:text-gray-100 border border-gray-700 rounded-lg hover:border-accent-purple transition-colors"
+            >
+              <Settings size={20} />
             </button>
           </div>
         </div>

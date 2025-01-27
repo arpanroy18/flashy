@@ -16,7 +16,7 @@ export function Layout({ children, currentPage, onNavigate }: LayoutProps) {
       {/* Sidebar */}
       <div className={`${isSidebarOpen ? 'w-64' : 'w-16'} bg-dashboard-card transition-all duration-300 border-r border-gray-700`}>
         <div className="p-4 flex items-center justify-between">
-          <h1 className={`font-bold text-xl ${!isSidebarOpen && 'hidden'}`}>StudyDeck</h1>
+          <h1 className={`font-bold text-xl ${!isSidebarOpen && 'hidden'}`}>Flashy</h1>
           <button
             onClick={() => setIsSidebarOpen(!isSidebarOpen)}
             className="p-2 hover:bg-dashboard-bg rounded-lg transition-colors"

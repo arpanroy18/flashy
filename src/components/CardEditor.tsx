@@ -56,7 +56,7 @@ export function CardEditor({ card, onSave, onClose }: CardEditorProps) {
             <textarea
               value={front}
               onChange={(e) => setFront(e.target.value)}
-              className="w-full px-3 py-2 bg-navy border border-gray-700 rounded-lg text-gray-100 focus:ring-2 focus:ring-accent-purple focus:border-accent-purple placeholder-gray-500"
+              className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:ring-2 focus:ring-accent-purple focus:border-accent-purple placeholder-gray-500"
               rows={3}
               required
               placeholder="Enter the question or prompt"
@@ -69,7 +69,7 @@ export function CardEditor({ card, onSave, onClose }: CardEditorProps) {
             <textarea
               value={back}
               onChange={(e) => setBack(e.target.value)}
-              className="w-full px-3 py-2 bg-navy border border-gray-700 rounded-lg text-gray-100 focus:ring-2 focus:ring-accent-purple focus:border-accent-purple placeholder-gray-500"
+              className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:ring-2 focus:ring-accent-purple focus:border-accent-purple placeholder-gray-500"
               rows={3}
               required
               placeholder="Enter the answer"
