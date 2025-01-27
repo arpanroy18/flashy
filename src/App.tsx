@@ -91,7 +91,8 @@ function App() {
       name,
       cards: [],
       parentId,
-      subdecks: []
+      subdecks: [],
+      gradeCount: { again: 0, hard: 0, good: 0, easy: 0 }
     };
 
     if (parentId) {
@@ -109,8 +110,22 @@ function App() {
   const handleUpdateCard = (deckId: string, cardId: string, updates: Partial<Flashcard>) => {
     setDecks(decks.map(deck => {
       if (deck.id !== deckId) return deck;
+
+      // Update grade counts if there's a new grade
+      let newGradeCount = { ...deck.gradeCount };
+      if (updates.lastGrade) {
+        // Decrease count for old grade if it exists
+        const oldCard = deck.cards.find(c => c.id === cardId);
+        if (oldCard?.lastGrade) {
+          newGradeCount[oldCard.lastGrade]--;
+        }
+        // Increase count for new grade
+        newGradeCount[updates.lastGrade]++;
+      }
+
       return {
         ...deck,
+        gradeCount: newGradeCount,
         cards: deck.cards.map(card =>
           card.id === cardId ? { ...card, ...updates } : card
         ),

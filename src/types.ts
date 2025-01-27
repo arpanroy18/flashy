@@ -7,6 +7,7 @@ export interface Flashcard {
   easeFactor: number;
   repetitions: number;
   lastReviewed?: Date;
+  lastGrade?: ReviewGrade;
 }
 
 export interface Deck {
@@ -15,6 +16,12 @@ export interface Deck {
   cards: Flashcard[];
   parentId?: string;
   subdecks?: string[]; // IDs of child decks
+  gradeCount: {
+    again: number;
+    hard: number;
+    good: number;
+    easy: number;
+  };
 }
 
 export type ReviewGrade = 'again' | 'hard' | 'good' | 'easy';
