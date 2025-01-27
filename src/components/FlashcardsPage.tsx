@@ -3,15 +3,16 @@ import { DeckList } from './DeckList';
 import { StudySession } from './StudySession';
 import { CardEditor } from './CardEditor';
 import { Deck, Flashcard } from '../types';
-import { PlusCircle, ArrowLeft, Trash2 } from 'lucide-react';
+import { PlusCircle, ArrowLeft, Trash2, FolderPlus } from 'lucide-react';
 
 interface FlashcardsPageProps {
   decks: Deck[];
-  onCreateDeck: (name: string) => void;
+  onCreateDeck: (name: string, parentId?: string) => void;
   onUpdateCard: (deckId: string, cardId: string, updates: Partial<Flashcard>) => void;
   onAddCard: (deckId: string, card: Flashcard) => void;
   onDeleteCard: (deckId: string, cardId: string) => void;
   onDeleteDeck: (deckId: string) => void;
+  getAllCardsFromDeck: (deckId: string) => Flashcard[];
 }
 
 export function FlashcardsPage({
@@ -21,6 +22,7 @@ export function FlashcardsPage({
   onAddCard,
   onDeleteCard,
   onDeleteDeck,
+  getAllCardsFromDeck,
 }: FlashcardsPageProps) {
   const [selectedDeck, setSelectedDeck] = useState<Deck | null>(null);
   const [isStudying, setIsStudying] = useState(false);
@@ -46,7 +48,6 @@ export function FlashcardsPage({
   const handleAddCard = (card: Flashcard) => {
     if (selectedDeck) {
       onAddCard(selectedDeck.id, card);
-      // Update the selected deck with the new card
       setSelectedDeck({
         ...selectedDeck,
         cards: [...selectedDeck.cards, card],
@@ -64,7 +65,6 @@ export function FlashcardsPage({
   const handleDeleteCard = (cardId: string) => {
     if (selectedDeck && confirm('Are you sure you want to delete this card?')) {
       onDeleteCard(selectedDeck.id, cardId);
-      // Update the selected deck
       setSelectedDeck({
         ...selectedDeck,
         cards: selectedDeck.cards.filter(card => card.id !== cardId),
@@ -72,10 +72,18 @@ export function FlashcardsPage({
     }
   };
 
+  const handleCreateSubdeck = () => {
+    const name = prompt('Enter subdeck name:');
+    if (name && selectedDeck) {
+      onCreateDeck(name, selectedDeck.id);
+    }
+  };
+
   if (isStudying && selectedDeck) {
+    const allCards = getAllCardsFromDeck(selectedDeck.id);
     return (
       <StudySession
-        cards={selectedDeck.cards}
+        cards={allCards}
         onUpdateCard={handleUpdateCard}
         onExit={handleExitStudy}
       />
@@ -94,6 +102,13 @@ export function FlashcardsPage({
             <span>Back to Decks</span>
           </button>
           <div className="flex gap-4">
+            <button
+              onClick={handleCreateSubdeck}
+              className="flex items-center gap-2 px-4 py-2 text-gray-300 hover:text-gray-100 border border-gray-700 rounded-lg hover:border-accent-purple transition-colors"
+            >
+              <FolderPlus size={20} />
+              <span>Add Subdeck</span>
+            </button>
             <button
               onClick={() => {
                 if (confirm('Are you sure you want to delete this deck?')) {
@@ -158,6 +173,9 @@ export function FlashcardsPage({
                 </div>
                 <div className="text-sm text-gray-500">
                   Next review: {new Date(card.nextReview).toLocaleDateString()}
+                  {card.lastGrade && (
+                    <span className="ml-2">Last grade: {card.lastGrade}</span>
+                  )}
                 </div>
               </div>
             ))}
@@ -183,7 +201,7 @@ export function FlashcardsPage({
       decks={decks}
       onSelectDeck={setSelectedDeck}
       onStudyDeck={handleStartStudy}
-      onCreateDeck={onCreateDeck}    // Remove the prompt wrapper, just pass onCreateDeck directly
+      onCreateDeck={onCreateDeck}
     />
   );
 }

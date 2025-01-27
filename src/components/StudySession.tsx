@@ -33,7 +33,11 @@ export function StudySession({ cards, onUpdateCard, onExit }: StudySessionProps)
   const currentCard = dueCards[currentCardIndex];
 
   const handleGrade = (grade: ReviewGrade) => {
-    const updates = calculateNextReview(currentCard, grade);
+    const updates = {
+      ...calculateNextReview(currentCard, grade),
+      lastGrade: grade,
+      lastReviewed: new Date()
+    };
     onUpdateCard(currentCard.id, updates);
     
     if (currentCardIndex < dueCards.length - 1) {

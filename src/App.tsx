@@ -38,6 +38,7 @@ function App() {
             repetitions: 0,
           },
         ],
+        gradeCount: { again: 0, hard: 0, good: 0, easy: 0 }
       },
     ];
   });
@@ -56,8 +57,19 @@ function App() {
       cardsStudied: 0,
       correctAnswers: 0,
       streak: 0,
-      studyHistory: [],
-      subjectDistribution: []
+      studyHistory: [
+        { date: '2024-03-01', hours: 1.5 },
+        { date: '2024-03-02', hours: 2.0 },
+        { date: '2024-03-03', hours: 1.0 },
+        { date: '2024-03-04', hours: 2.5 },
+        { date: '2024-03-05', hours: 1.8 },
+      ],
+      subjectDistribution: [
+        { name: 'Mathematics', value: 30 },
+        { name: 'Science', value: 25 },
+        { name: 'History', value: 20 },
+        { name: 'Languages', value: 25 },
+      ]
     };
   });
 
@@ -219,4 +231,4 @@ function App() {
   );
 }
 
-export default App
+export default App;
