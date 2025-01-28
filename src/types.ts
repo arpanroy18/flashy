@@ -1,3 +1,5 @@
+import { Card as FSRSCard } from 'ts-fsrs';
+
 export interface Flashcard {
   id: string;
   front: string;
@@ -8,6 +10,7 @@ export interface Flashcard {
   repetitions: number;
   lastReviewed?: Date;
   lastGrade?: ReviewGrade;
+  fsrs: FSRSCard;  // Add FSRS data
 }
 
 export interface Deck {
