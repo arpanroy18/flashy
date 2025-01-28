@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { ArrowLeft, Eclipse as Flip } from 'lucide-react';
 import { Flashcard, ReviewGrade } from '../types';
@@ -30,25 +31,12 @@ export function StudySession({ cards, onUpdateCard, onExit }: StudySessionProps)
     );
   }
 
-  // Ensure currentCardIndex is within bounds
-  if (currentCardIndex >= dueCards.length) {
-    setCurrentCardIndex(0);
-    return null; // Render nothing while state updates
-  }
-
   const currentCard = dueCards[currentCardIndex];
-  
-  // Safety check - if somehow currentCard is undefined, exit the study session
-  if (!currentCard) {
-    onExit();
-    return null;
-  }
 
   const handleGrade = (grade: ReviewGrade) => {
     const updates = {
       ...calculateNextReview(currentCard, grade),
-      lastGrade: grade,
-      lastReviewed: new Date()
+      lastGrade: grade
     };
     onUpdateCard(currentCard.id, updates);
     

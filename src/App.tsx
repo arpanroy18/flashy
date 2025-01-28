@@ -38,7 +38,8 @@ function App() {
             repetitions: 0,
           },
         ],
-        gradeCount: { again: 0, hard: 0, good: 0, easy: 0 }
+        gradeCount: { again: 0, hard: 0, good: 0, easy: 0 },
+        subdecks: []
       },
     ];
   });
@@ -85,12 +86,14 @@ function App() {
     const deck = decks.find(d => d.id === deckId);
     if (!deck) return [];
 
+    // Start with the deck's own cards
     let allCards = [...deck.cards];
     
-    // Get cards from subdecks
-    if (deck.subdecks) {
+    // Recursively get cards from all subdecks
+    if (deck.subdecks && deck.subdecks.length > 0) {
       deck.subdecks.forEach(subdeckId => {
-        allCards = [...allCards, ...getAllCardsFromDeck(subdeckId)];
+        const subdeckCards = getAllCardsFromDeck(subdeckId);
+        allCards = [...allCards, ...subdeckCards];
       });
     }
 
@@ -107,15 +110,21 @@ function App() {
       gradeCount: { again: 0, hard: 0, good: 0, easy: 0 }
     };
 
-    if (parentId) {
-      setDecks(decks.map(deck => 
-        deck.id === parentId
-          ? { ...deck, subdecks: [...(deck.subdecks || []), newDeck.id] }
-          : deck
-      ));
-    }
+    setDecks(prevDecks => {
+      const newDecks = [...prevDecks, newDeck];
+      
+      if (parentId) {
+        // Find and update the parent deck with the new subdeck ID
+        return newDecks.map(deck => 
+          deck.id === parentId
+            ? { ...deck, subdecks: [...(deck.subdecks || []), newDeck.id] }
+            : deck
+        );
+      }
+      
+      return newDecks;
+    });
 
-    setDecks([...decks, newDeck]);
     updateStats();
   };
 
@@ -201,9 +210,21 @@ function App() {
   };
 
   const updateStats = () => {
-    const totalCards = decks.reduce((sum, deck) => sum + getAllCardsFromDeck(deck.id).length, 0);
-    const cardsStudied = decks.reduce((sum, deck) => 
-      sum + getAllCardsFromDeck(deck.id).filter(card => card.lastReviewed).length, 0);
+    // Calculate total cards including all subdeck cards
+    const totalCards = decks.reduce((sum, deck) => {
+      if (!deck.parentId) { // Only count top-level decks to avoid double counting
+        return sum + getAllCardsFromDeck(deck.id).length;
+      }
+      return sum;
+    }, 0);
+
+    // Calculate studied cards including all subdeck cards
+    const cardsStudied = decks.reduce((sum, deck) => {
+      if (!deck.parentId) { // Only count top-level decks to avoid double counting
+        return sum + getAllCardsFromDeck(deck.id).filter(card => card.lastReviewed).length;
+      }
+      return sum;
+    }, 0);
     
     setStats(prev => ({
       ...prev,
