@@ -4,13 +4,20 @@ export interface Flashcard {
   id: string;
   front: string;
   back: string;
+  deckId: string;
+  created: Date;
+  modified: Date;
   nextReview: Date;
   interval: number;
   easeFactor: number;
   repetitions: number;
+  lapses?: number;
+  state?: number;
+  difficulty?: number;
+  retrievability?: number;
   lastReviewed?: Date;
   lastGrade?: ReviewGrade;
-  fsrs: FSRSCard;  // Add FSRS data
+  fsrs: FSRSCard;
 }
 
 export interface Deck {

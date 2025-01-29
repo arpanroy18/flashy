@@ -115,118 +115,122 @@ export function PomodoroTimer() {
   };
 
   return (
-    <div className="p-4 border-t border-gray-700">
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-2">
-          {isBreak ? <Coffee size={20} className="text-dashboard-accent" /> : 
-                     <Timer size={20} className="text-dashboard-accent" />}
-          <span className="font-medium">{isBreak ? 'Break Time' : 'Study Time'}</span>
-        </div>
-        <div className="flex gap-2">
-          <button
-            onClick={() => setIsMinimized(!isMinimized)}
-            className="p-2 hover:bg-dashboard-bg rounded-lg transition-colors"
-          >
-            {isMinimized ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-          </button>
-          {!isMinimized && (
+    <div className="fixed bottom-0 left-0 w-64 bg-dashboard-card border-t border-gray-700 z-50">
+      <div className="p-4">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2">
+            {isBreak ? 
+              <Coffee size={20} className="text-dashboard-accent" /> :
+              <Timer size={20} className="text-dashboard-accent" />
+            }
+            <span className="font-medium">{isBreak ? 'Break Time' : 'Study Time'}</span>
+          </div>
+          <div className="flex gap-2">
             <button
-              onClick={() => setShowSettings(!showSettings)}
+              onClick={() => setIsMinimized(!isMinimized)}
               className="p-2 hover:bg-dashboard-bg rounded-lg transition-colors"
             >
-              <Settings size={16} />
+              {isMinimized ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
             </button>
-          )}
+            {!isMinimized && (
+              <button
+                onClick={() => setShowSettings(!showSettings)}
+                className="p-2 hover:bg-dashboard-bg rounded-lg transition-colors"
+              >
+                <Settings size={16} />
+              </button>
+            )}
+          </div>
         </div>
-      </div>
 
-      {/* Only show these sections when not minimized */}
-      {!isMinimized && (
-        <>
-          {showSettings && (
-            <div className="mb-4 p-4 bg-dashboard-bg rounded-lg">
-              <h4 className="text-sm font-medium mb-3">Timer Settings</h4>
-              <div className="space-y-2">
-                <div>
-                  <label className="text-xs text-gray-400">Study Time (minutes)</label>
-                  <input
-                    type="number"
-                    value={settings.studyTime}
-                    onChange={(e) => setSettings(s => ({ ...s, studyTime: parseInt(e.target.value) }))}
-                    className="w-full bg-dashboard-card p-1 rounded text-sm"
-                    min="1"
-                  />
-                </div>
-                <div>
-                  <label className="text-xs text-gray-400">Break Time (minutes)</label>
-                  <input
-                    type="number"
-                    value={settings.breakTime}
-                    onChange={(e) => setSettings(s => ({ ...s, breakTime: parseInt(e.target.value) }))}
-                    className="w-full bg-dashboard-card p-1 rounded text-sm"
-                    min="1"
-                  />
-                </div>
-                <div>
-                  <label className="text-xs text-gray-400">Long Break Time (minutes)</label>
-                  <input
-                    type="number"
-                    value={settings.longBreakTime}
-                    onChange={(e) => setSettings(s => ({ ...s, longBreakTime: parseInt(e.target.value) }))}
-                    className="w-full bg-dashboard-card p-1 rounded text-sm"
-                    min="1"
-                  />
-                </div>
-                <div>
-                  <label className="text-xs text-gray-400">Sessions until Long Break</label>
-                  <input
-                    type="number"
-                    value={settings.sessionsUntilLongBreak}
-                    onChange={(e) => setSettings(s => ({ ...s, sessionsUntilLongBreak: parseInt(e.target.value) }))}
-                    className="w-full bg-dashboard-card p-1 rounded text-sm"
-                    min="1"
-                  />
+        {/* Only show these sections when not minimized */}
+        {!isMinimized && (
+          <>
+            {showSettings && (
+              <div className="mb-4 p-4 bg-dashboard-bg rounded-lg">
+                <h4 className="text-sm font-medium mb-3">Timer Settings</h4>
+                <div className="space-y-2">
+                  <div>
+                    <label className="text-xs text-gray-400">Study Time (minutes)</label>
+                    <input
+                      type="number"
+                      value={settings.studyTime}
+                      onChange={(e) => setSettings(s => ({ ...s, studyTime: parseInt(e.target.value) }))}
+                      className="w-full bg-dashboard-card p-1 rounded text-sm"
+                      min="1"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs text-gray-400">Break Time (minutes)</label>
+                    <input
+                      type="number"
+                      value={settings.breakTime}
+                      onChange={(e) => setSettings(s => ({ ...s, breakTime: parseInt(e.target.value) }))}
+                      className="w-full bg-dashboard-card p-1 rounded text-sm"
+                      min="1"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs text-gray-400">Long Break Time (minutes)</label>
+                    <input
+                      type="number"
+                      value={settings.longBreakTime}
+                      onChange={(e) => setSettings(s => ({ ...s, longBreakTime: parseInt(e.target.value) }))}
+                      className="w-full bg-dashboard-card p-1 rounded text-sm"
+                      min="1"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs text-gray-400">Sessions until Long Break</label>
+                    <input
+                      type="number"
+                      value={settings.sessionsUntilLongBreak}
+                      onChange={(e) => setSettings(s => ({ ...s, sessionsUntilLongBreak: parseInt(e.target.value) }))}
+                      className="w-full bg-dashboard-card p-1 rounded text-sm"
+                      min="1"
+                    />
+                  </div>
                 </div>
               </div>
+            )}
+
+            <div className="text-center mb-4">
+              <div className="text-3xl font-mono font-bold mb-2">{formatTime(timeLeft)}</div>
+              <div className="text-xs text-gray-400">
+                Session {sessionCount % settings.sessionsUntilLongBreak || settings.sessionsUntilLongBreak} / {settings.sessionsUntilLongBreak}
+              </div>
             </div>
-          )}
 
-          <div className="text-center mb-4">
-            <div className="text-3xl font-mono font-bold mb-2">{formatTime(timeLeft)}</div>
-            <div className="text-xs text-gray-400">
-              Session {sessionCount % settings.sessionsUntilLongBreak || settings.sessionsUntilLongBreak} / {settings.sessionsUntilLongBreak}
+            <div className="flex justify-center gap-2">
+              <button
+                onClick={() => setIsRunning(!isRunning)}
+                className="p-2 bg-dashboard-accent hover:bg-dashboard-accent-hover text-white rounded-lg transition-colors"
+              >
+                {isRunning ? <Pause size={16} /> : <Play size={16} />}
+              </button>
+              <button
+                onClick={handleReset}
+                className="p-2 hover:bg-dashboard-bg rounded-lg transition-colors"
+              >
+                <RotateCcw size={16} />
+              </button>
+              <button
+                onClick={handleSkip}
+                className="p-2 bg-yellow-500 hover:bg-yellow-600 text-white rounded-lg transition-colors"
+              >
+                Skip
+              </button>
             </div>
-          </div>
+          </>
+        )}
 
-          <div className="flex justify-center gap-2">
-            <button
-              onClick={() => setIsRunning(!isRunning)}
-              className="p-2 bg-dashboard-accent hover:bg-dashboard-accent-hover text-white rounded-lg transition-colors"
-            >
-              {isRunning ? <Pause size={16} /> : <Play size={16} />}
-            </button>
-            <button
-              onClick={handleReset}
-              className="p-2 hover:bg-dashboard-bg rounded-lg transition-colors"
-            >
-              <RotateCcw size={16} />
-            </button>
-            <button
-              onClick={handleSkip}
-              className="p-2 bg-yellow-500 hover:bg-yellow-600 text-white rounded-lg transition-colors"
-            >
-              Skip
-            </button>
+        {/* Show minimal view when minimized */}
+        {isMinimized && (
+          <div className="text-center">
+            <div className="text-xl font-mono font-bold">{formatTime(timeLeft)}</div>
           </div>
-        </>
-      )}
-
-      {/* Show minimal view when minimized */}
-      {isMinimized && (
-        <div className="text-center">
-          <div className="text-xl font-mono font-bold">{formatTime(timeLeft)}</div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 }
