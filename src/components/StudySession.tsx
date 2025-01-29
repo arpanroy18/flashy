@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, Eclipse as Flip, Brain } from 'lucide-react';
+import { ArrowLeft, Eclipse as Flip } from 'lucide-react';
 import { Flashcard, ReviewGrade } from '../types';
-import { calculateNextReview, isCardDue, getStudyStats, initializeFSRSCard } from '../utils/spaced-repetition';
+import { calculateNextReview, isCardDue } from '../utils/spaced-repetition';
 
 interface StudySessionProps {
   cards: Flashcard[];
@@ -13,33 +13,18 @@ export function StudySession({ cards, onUpdateCard, onExit }: StudySessionProps)
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
   const [isShowingAnswer, setIsShowingAnswer] = useState(false);
   const [studyPool, setStudyPool] = useState<Flashcard[]>([]);
-  const [stats, setStats] = useState(() => getStudyStats(cards));
-
+  
   // Initialize study pool with due cards
   useEffect(() => {
-    // Initialize any cards that don't have FSRS data
-    const initializedCards = cards.map(card => {
-      if (!card.fsrs) {
-        return { ...card, fsrs: initializeFSRSCard() };
-      }
-      return card;
-    });
-
-    const dueCards = initializedCards.filter(isCardDue);
+    const dueCards = cards.filter(isCardDue);
     setStudyPool(dueCards);
-    setStats(getStudyStats(initializedCards));
   }, [cards]);
   
   if (studyPool.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center h-[80vh] bg-navy">
-        <Brain size={48} className="text-accent-purple mb-4" />
         <h2 className="text-2xl font-bold text-gray-100 mb-4">All caught up!</h2>
-        <p className="text-gray-300 mb-2">No cards due for review.</p>
-        <p className="text-gray-400 mb-6">
-          Cards in learning: {stats.learningCount} | 
-          Cards in review: {stats.reviewCount}
-        </p>
+        <p className="text-gray-300 mb-6">No cards due for review.</p>
         <button
           onClick={onExit}
           className="flex items-center gap-2 px-4 py-2 text-accent-purple hover:text-accent-indigo transition-colors"
@@ -57,18 +42,28 @@ export function StudySession({ cards, onUpdateCard, onExit }: StudySessionProps)
     const updates = calculateNextReview(currentCard, grade);
     onUpdateCard(currentCard.id, updates);
     
-    // If the card is still learning/relearning, add it back to the pool
-    if (updates.fsrs?.state !== 'Review') {
-      setStudyPool(prev => [...prev.slice(currentCardIndex + 1), { ...currentCard, ...updates }]);
-    } else {
-      setStudyPool(prev => prev.slice(currentCardIndex + 1));
-    }
-
-    setCurrentCardIndex(prev => 
-      prev < studyPool.length - 1 ? prev + 1 : 0
-    );
+    // Check if card needs more review
+    const updatedCard = { ...currentCard, ...updates };
+    const needsMoreReview = isCardDue(updatedCard);
+    
+    // Update study pool
+    setStudyPool(prevPool => {
+      const newPool = [...prevPool];
+      newPool.splice(currentCardIndex, 1);
+      
+      if (needsMoreReview) {
+        // If card needs more review, add it to the end of the pool
+        newPool.push(updatedCard);
+      }
+      
+      return newPool;
+    });
+    
+    // Reset for next card
     setIsShowingAnswer(false);
-    setStats(getStudyStats([...cards, { ...currentCard, ...updates }]));
+    setCurrentCardIndex(prev => 
+      prev >= studyPool.length - 1 ? 0 : prev
+    );
   };
 
   return (
@@ -82,16 +77,15 @@ export function StudySession({ cards, onUpdateCard, onExit }: StudySessionProps)
             <ArrowLeft size={20} />
             <span>Back to Deck</span>
           </button>
-          <div className="text-sm text-gray-400">
-            Learning: {stats.learningCount} | Review: {stats.reviewCount}
+          <div className="text-gray-400">
+            Cards remaining: {studyPool.length}
           </div>
         </div>
         
         <div className="bg-navy-light rounded-lg shadow-lg p-8 mb-6 min-h-[300px] border border-gray-700">
           <div className="text-center">
             <p className="text-gray-400 mb-4">
-              Card {currentCardIndex + 1} of {studyPool.length} | 
-              State: {currentCard.fsrs?.state || 'New'}
+              Card {currentCardIndex + 1} of {studyPool.length}
             </p>
             <div className="mb-8">
               <h3 className="text-xl font-medium text-gray-100 mb-4">{currentCard.front}</h3>

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { X } from 'lucide-react';
 import { Flashcard } from '../types';
 import { v4 as uuidv4 } from 'uuid';
-import { initializeFSRSCard } from '../utils/spaced-repetition';
+import { getInitialCardState } from '../utils/spaced-repetition';
 
 interface CardEditorProps {
   card?: Flashcard | null;
@@ -23,16 +23,16 @@ export function CardEditor({ card, onSave, onClose }: CardEditorProps) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    const now = new Date();
+    
     const newCard: Flashcard = {
       id: card?.id || uuidv4(),
       front,
       back,
-      nextReview: card?.nextReview || new Date(),
-      interval: card?.interval || 0,
-      easeFactor: card?.easeFactor || 2.5,
-      repetitions: card?.repetitions || 0,
-      fsrs: card?.fsrs || initializeFSRSCard(),
+      ...getInitialCardState(now),
+      ...card // Preserve existing card data if editing
     };
+    
     onSave(newCard);
   };
 

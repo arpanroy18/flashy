@@ -1,6 +1,7 @@
 import React from 'react';
 import { LayoutDashboard, Library, Menu } from 'lucide-react';
 import { useState } from 'react';
+import { PomodoroTimer } from './PomodoroTimer';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -14,7 +15,7 @@ export function Layout({ children, currentPage, onNavigate }: LayoutProps) {
   return (
     <div className="flex min-h-screen">
       {/* Sidebar */}
-      <div className={`${isSidebarOpen ? 'w-64' : 'w-16'} bg-dashboard-card transition-all duration-300 border-r border-gray-700`}>
+      <div className={`${isSidebarOpen ? 'w-64' : 'w-16'} bg-dashboard-card transition-all duration-300 border-r border-gray-700 flex flex-col`}>
         <div className="p-4 flex items-center justify-between">
           <h1 className={`font-bold text-xl ${!isSidebarOpen && 'hidden'}`}>Flashy</h1>
           <button
@@ -50,6 +51,13 @@ export function Layout({ children, currentPage, onNavigate }: LayoutProps) {
             {isSidebarOpen && <span>Flashcards</span>}
           </button>
         </nav>
+
+        {/* Pomodoro Timer */}
+        {isSidebarOpen && (
+          <div className="mt-auto">
+            <PomodoroTimer />
+          </div>
+        )}
       </div>
 
       {/* Main Content */}
