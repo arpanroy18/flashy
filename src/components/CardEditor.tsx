@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { X } from 'lucide-react';
 import { Flashcard } from '../types';
 import { v4 as uuidv4 } from 'uuid';
+import { initializeFSRSCard } from '../utils/spaced-repetition';
 
 interface CardEditorProps {
   card?: Flashcard | null;
@@ -30,6 +31,7 @@ export function CardEditor({ card, onSave, onClose }: CardEditorProps) {
       interval: card?.interval || 0,
       easeFactor: card?.easeFactor || 2.5,
       repetitions: card?.repetitions || 0,
+      fsrs: card?.fsrs || initializeFSRSCard(),
     };
     onSave(newCard);
   };
