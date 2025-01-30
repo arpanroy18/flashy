@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { PlusCircle, Settings, FolderPlus } from 'lucide-react';
 import { Deck } from '../types';
@@ -56,12 +55,7 @@ export function DeckList({ decks, onSelectDeck, onStudyDeck, onCreateDeck }: Dec
             </div>
           </div>
           
-          <p className="text-gray-400 mb-4">
-            {deck.cards.length} cards
-            <span className="ml-2 text-sm text-gray-500">
-              {deck.gradeCount.again} | {deck.gradeCount.hard} | {deck.gradeCount.good} | {deck.gradeCount.easy}
-            </span>
-          </p>
+          <p className="text-gray-400 mb-4">{deck.cards.length} cards</p>
           
           <div className="flex gap-4">
             <button

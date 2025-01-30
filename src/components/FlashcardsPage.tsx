@@ -222,10 +222,8 @@ export function FlashcardsPage({
                     </div>
                   </div>
                   <div className="text-sm text-gray-500">
-                    Next review: {new Date(card.nextReview).toLocaleDateString()}
-                    {card.lastGrade && (
-                      <span className="ml-2">Last grade: {card.lastGrade}</span>
-                    )}
+                    {/* remove: nextReview display */}
+                    {/* remove: lastGrade display */}
                   </div>
                 </div>
               ))}

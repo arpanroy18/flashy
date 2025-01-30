@@ -1,8 +1,6 @@
-
 import React, { useState } from 'react';
 import { ArrowLeft, Eclipse as Flip } from 'lucide-react';
 import { Flashcard, ReviewGrade } from '../types';
-import { calculateNextReview } from '../utils/spaced-repetition';
 
 interface StudySessionProps {
   cards: Flashcard[];
@@ -13,7 +11,7 @@ interface StudySessionProps {
 export function StudySession({ cards, onUpdateCard, onExit }: StudySessionProps) {
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
   const [isShowingAnswer, setIsShowingAnswer] = useState(false);
-  const dueCards = cards.filter(card => card.nextReview <= new Date());
+  const dueCards = cards;
   
   if (dueCards.length === 0) {
     return (
@@ -34,12 +32,6 @@ export function StudySession({ cards, onUpdateCard, onExit }: StudySessionProps)
   const currentCard = dueCards[currentCardIndex];
 
   const handleGrade = (grade: ReviewGrade) => {
-    const updates = {
-      ...calculateNextReview(currentCard, grade),
-      lastGrade: grade
-    };
-    onUpdateCard(currentCard.id, updates);
-    
     if (currentCardIndex < dueCards.length - 1) {
       setCurrentCardIndex(prev => prev + 1);
       setIsShowingAnswer(false);

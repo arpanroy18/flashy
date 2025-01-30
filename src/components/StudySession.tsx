@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowLeft, Eclipse as Flip } from 'lucide-react';
 import { Flashcard, ReviewGrade } from '../types';
-import { calculateNextReview, isCardDue } from '../utils/spaced-repetition';
 
 interface StudySessionProps {
   cards: Flashcard[];
@@ -12,13 +11,7 @@ interface StudySessionProps {
 export function StudySession({ cards, onUpdateCard, onExit }: StudySessionProps) {
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
   const [isShowingAnswer, setIsShowingAnswer] = useState(false);
-  const [studyPool, setStudyPool] = useState<Flashcard[]>([]);
-  
-  // Initialize study pool with due cards
-  useEffect(() => {
-    const dueCards = cards.filter(isCardDue);
-    setStudyPool(dueCards);
-  }, [cards]);
+  const [studyPool, setStudyPool] = useState(cards);
   
   if (studyPool.length === 0) {
     return (
@@ -39,31 +32,12 @@ export function StudySession({ cards, onUpdateCard, onExit }: StudySessionProps)
   const currentCard = studyPool[currentCardIndex];
 
   const handleGrade = (grade: ReviewGrade) => {
-    const updates = calculateNextReview(currentCard, grade);
-    onUpdateCard(currentCard.id, updates);
-    
-    // Check if card needs more review
-    const updatedCard = { ...currentCard, ...updates };
-    const needsMoreReview = isCardDue(updatedCard);
-    
-    // Update study pool
-    setStudyPool(prevPool => {
-      const newPool = [...prevPool];
-      newPool.splice(currentCardIndex, 1);
-      
-      if (needsMoreReview) {
-        // If card needs more review, add it to the end of the pool
-        newPool.push(updatedCard);
-      }
-      
-      return newPool;
-    });
-    
-    // Reset for next card
+    if (currentCardIndex < studyPool.length - 1) {
+      setCurrentCardIndex(prev => prev + 1);
+    } else {
+      onExit();
+    }
     setIsShowingAnswer(false);
-    setCurrentCardIndex(prev => 
-      prev >= studyPool.length - 1 ? 0 : prev
-    );
   };
 
   return (
