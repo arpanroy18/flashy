@@ -11,7 +11,7 @@ export interface Flashcard {
   interval: number;
   easeFactor: number;
   repetitions: number;
-  lapses?: number;
+  lapses: number;
   state?: number;
   difficulty?: number;
   retrievability?: number;

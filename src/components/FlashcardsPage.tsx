@@ -47,10 +47,14 @@ export function FlashcardsPage({
 
   const handleAddCard = (card: Flashcard) => {
     if (selectedDeck) {
-      onAddCard(selectedDeck.id, card);
+      const cardWithDeckId = {
+        ...card,
+        deckId: selectedDeck.id
+      };
+      onAddCard(selectedDeck.id, cardWithDeckId);
       setSelectedDeck({
         ...selectedDeck,
-        cards: [...selectedDeck.cards, card],
+        cards: [...selectedDeck.cards, cardWithDeckId],
       });
     }
     setIsAddingCard(false);

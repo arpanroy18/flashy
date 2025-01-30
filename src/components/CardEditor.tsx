@@ -27,6 +27,25 @@ export function CardEditor({ card, onSave, onClose }: CardEditorProps) {
       id: card?.id || uuidv4(),
       front,
       back,
+      deckId: '', // Will be set by parent component
+      created: new Date(),
+      modified: new Date(),
+      nextReview: new Date(),
+      interval: 0,
+      easeFactor: 2.5,
+      repetitions: 0,
+      lapses: 0,
+      fsrs: {
+        due: new Date(),
+        stability: 0,
+        difficulty: 0,
+        elapsed_days: 0,
+        scheduled_days: 0,
+        reps: 0,
+        lapses: 0,
+        state: 0,
+        last_review: undefined,
+      },
       ...card // Preserve existing card data if editing
     };
     

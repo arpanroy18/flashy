@@ -100,7 +100,7 @@ export function StudySession({ cards, onUpdateCard, onExit }: StudySessionProps)
             </button>
             <button
               onClick={() => handleGrade('easy')}
-              className="py-3 px-4 bg-accent-purple hover:bg-accent-indigo text-gray-100 rounded-lg transition-colors"
+              className="py-3 px-4 bg-blue-600 hover:bg-blue-700 text-gray-100 rounded-lg transition-colors"
             >
               Easy
             </button>
