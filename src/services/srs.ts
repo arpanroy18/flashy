@@ -1,52 +1,79 @@
 // src/services/srs.ts
+
 const MIN_EASE = 1.3;
-const MAX_EASE = 2.5;
-const RETIREMENT_INTERVAL = 180; // Days
+const MAX_EASE = 3.0; // Updated to new max
+const INITIAL_EASE = 1.7;
+
+interface SRSCardUpdate {
+  score: number;
+  interval: number;
+  easeFactor: number;
+  lastReviewed: Date;
+  nextReview: Date;
+  retired: boolean;
+  stayInSession: boolean;
+}
 
 export const calculateNextReview = (
   card: Flashcard,
   rating: 'again' | 'hard' | 'good' | 'easy'
-): Flashcard => {
+): SRSCardUpdate => {
   const now = new Date();
-  let newInterval = card.interval;
-  let newEase = card.easeFactor;
-  let newConsecutive = card.consecutiveCorrect;
+  let newScore = card.score || 0;
+  let newInterval = card.interval || 1;
+  let newEase = card.easeFactor || INITIAL_EASE;
+  let stayInSession = false;
 
   switch (rating) {
     case 'again':
-      newInterval = 1;
-      newEase = Math.max(MIN_EASE, card.easeFactor - 0.15);
-      newConsecutive = 0;
+      newScore = Math.max(0, newScore - 20);
+      newInterval = 1; // Reset to 1 day
+      newEase = Math.max(MIN_EASE, newEase - 0.15);
+      stayInSession = true;
       break;
       
     case 'hard':
-      newInterval = Math.ceil(card.interval * 1.2);
-      newConsecutive += 1;
+      newScore = Math.min(100, newScore + 10);
+      newInterval = Math.ceil(newInterval * 1.2);
+      newEase = Math.max(MIN_EASE, newEase - 0.05);
+      stayInSession = true;
       break;
       
     case 'good':
-      newInterval = Math.ceil(card.interval * card.easeFactor);
-      newEase = Math.min(MAX_EASE, card.easeFactor + 0.05);
-      newConsecutive += 1;
+      newScore = Math.min(100, newScore + 25);
+      newInterval = Math.ceil(newInterval * newEase);
+      newEase = Math.min(MAX_EASE, newEase + 0.05);
       break;
       
     case 'easy':
-      newInterval = Math.ceil(card.interval * card.easeFactor * 1.5);
-      newEase = Math.min(MAX_EASE, card.easeFactor + 0.1);
-      newConsecutive += 1;
+      newScore = Math.min(100, newScore + 40);
+      newInterval = Math.ceil(newInterval * newEase * 2);
+      newEase = Math.min(MAX_EASE, newEase + 0.1);
       break;
   }
 
-  // Check retirement criteria
-  const retired = newInterval >= RETIREMENT_INTERVAL || newConsecutive >= 5;
+  // Card retires at score 100
+  const retired = newScore >= 100;
 
   return {
-    ...card,
-    interval: retired ? card.interval : newInterval,
+    score: newScore,
+    interval: newInterval,
     easeFactor: newEase,
-    consecutiveCorrect: retired ? 0 : newConsecutive,
     lastReviewed: now,
-    nextReview: new Date(now.getTime() + newInterval * 86400000),
-    retired: card.retired || retired
+    nextReview: new Date(now.getTime() + newInterval * 86400000), // Convert days to milliseconds
+    retired,
+    stayInSession: !retired && stayInSession
   };
+};
+
+// Helper function to sort cards by score (lowest first)
+export const sortByScore = (cards: Flashcard[]): Flashcard[] => {
+  return [...cards].sort((a, b) => (a.score || 0) - (b.score || 0));
+};
+
+// Helper to check if a card needs review
+export const needsReview = (card: Flashcard): boolean => {
+  if (card.retired) return false;
+  if (!card.nextReview) return true;
+  return new Date(card.nextReview) <= new Date();
 };

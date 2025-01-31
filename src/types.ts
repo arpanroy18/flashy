@@ -7,17 +7,13 @@ export interface Flashcard {
   deckId: string;
   created: Date;
   modified: Date;
-  nextReview: Date;
+  score: number;
   interval: number;
   easeFactor: number;
-  repetitions: number;
-  lapses: number;
-  state?: number;
-  difficulty?: number;
-  retrievability?: number;
   lastReviewed?: Date;
+  nextReview: Date;
+  retired: boolean;
   lastGrade?: ReviewGrade;
-  fsrs: FSRSCard;
 }
 
 export interface Deck {
@@ -35,19 +31,3 @@ export interface Deck {
 }
 
 export type ReviewGrade = 'again' | 'hard' | 'good' | 'easy';
-
-export interface StudyStats {
-  totalCards: number;
-  cardsStudied: number;
-  correctAnswers: number;
-  streak: number;
-  lastStudyDate?: Date;
-  studyHistory: {
-    date: string;
-    hours: number;
-  }[];
-  subjectDistribution: {
-    name: string;
-    value: number;
-  }[];
-}
